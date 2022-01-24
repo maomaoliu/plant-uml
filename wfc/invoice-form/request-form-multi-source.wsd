@@ -1,0 +1,41 @@
+@startuml
+hide empty description
+skinparam state {
+    BackgroundColor Ivory
+    BackgroundColor<<WEB>> HoneyDew
+    BackgroundColor<<TSP>> Azure
+    BackgroundColor<<OPENAPI>> Linen
+}
+
+
+
+
+state 来源 <<choice>>
+
+' WEB
+[*] --> 选择计算类型 <<WEB>> : 来源为WEB
+选择计算类型 --> 填写申请单信息 <<WEB>>
+填写申请单信息 -->  申请单业务校验
+申请单业务校验 -right->创建申请单
+创建申请单 -right-> 来源
+来源 --> 人员加入业务组 <<WEB>> : 来源为WEB
+人员加入业务组 --> 记录操作日志
+记录操作日志 -right-> [*]
+
+' TSP
+state "计算类型设置为\n开票金额" as setup_cal_type <<TSP>>
+[*] --> 提交结算单 <<TSP>>: 来源为TSP
+提交结算单 : 包含 externalId 
+提交结算单 --> setup_cal_type 
+setup_cal_type --> 创建申请单
+来源 --> Submit申请单 <<TSP>> : 来源为TSP
+Submit申请单 --> [*]
+
+' OPEN_API
+[*] --> 提交申请单 <<OPENAPI>>: 来源为OPEN_API
+提交申请单 --> 申请单业务校验
+来源 --> Commit申请单 <<OPENAPI>> : 来源为OPEN_API
+Commit申请单 --> 记录操作日志
+
+
+@enduml

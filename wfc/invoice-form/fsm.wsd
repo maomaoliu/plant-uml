@@ -1,0 +1,41 @@
+@startuml
+
+hide empty description
+
+skinparam state {
+  BackgroundColor LightCyan
+  BackgroundColor<<RequestForm>> Ivory
+}
+
+state request_form_submitted_fork_state <<fork>>
+
+
+' request Form
+RF.IN_PROGRESS : 创建中，草稿态
+RF.COMMITTED : 完成创建
+RF.SUBMITTED  : 申请单已提交
+
+[*] -right-> RF.IN_PROGRESS
+RF.IN_PROGRESS <<RequestForm>> --> RF.COMMITTED <<RequestForm>> : 完成创建
+RF.IN_PROGRESS <<RequestForm>> --> RF.IN_PROGRESS : 编辑
+RF.COMMITTED <<RequestForm>> --> RF.COMMITTED : 编辑
+RF.COMMITTED --> request_form_submitted_fork_state : 申请开票
+request_form_submitted_fork_state --> RF.SUBMITTED <<RequestForm>>  : 提交申请单
+
+
+' invoice form
+SUBMITTED : 申请单已提交，开票单已创建
+ABONDONED : 已失效
+RECIEVED : 已确认收款
+INVOICED : 已开发票
+ARCHIVED : 已归档
+
+request_form_submitted_fork_state -right-> SUBMITTED : 创建开票单
+SUBMITTED --> RECIEVED : 确认收款
+RECIEVED --> INVOICED : 开票单完税
+INVOICED --> ARCHIVED : 人工归档 / 定时任务归档
+ARCHIVED -right-> [*]
+SUBMITTED -right-> ABONDONED : 人工失效 / 定时任务失效 
+
+
+@enduml
