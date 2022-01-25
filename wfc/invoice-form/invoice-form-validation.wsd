@@ -1,0 +1,25 @@
+@startuml
+hide empty description
+skinparam state {
+    BackgroundColor LightCyan
+}
+
+
+state 开票单业务校验{
+    state 开票日期是否在月末3天 <<choice>>
+    state 实发金额是否小于等于0 <<choice>>
+
+    校验入口 <<EntryPoint>> --> 开票日期校验
+    开票日期校验 -right-> 开票日期是否在月末3天
+    开票日期是否在月末3天 --> 开票金额校验: 不在月末3天
+    开票日期是否在月末3天 --> 校验失败出口 <<ExitPoint>> : 在月末3天
+    开票金额校验 -right-> 实发金额是否小于等于0
+    实发金额是否小于等于0 --> 校验成功出口 <<ExitPoint>> : 实发金额大于0
+    实发金额是否小于等于0 --> 校验失败出口 <<ExitPoint>> : 实发金额不大于0
+}
+
+[*] --> 校验入口
+校验失败出口 --> [*]
+校验成功出口 --> [*]
+
+@enduml

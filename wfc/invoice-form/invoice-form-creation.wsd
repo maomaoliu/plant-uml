@@ -1,0 +1,22 @@
+@startuml
+
+hide empty description
+skinparam state {
+    BackgroundColor LightCyan
+}
+
+
+[*] --> 开票单业务校验
+开票单业务校验 --> 创建开票单
+
+state 创建开票单 {
+    创建开票单本单 --> 创建开票单明细
+}
+
+创建开票单 -right-> submit申请单
+submit申请单 --> 更新纳税人计税类别
+更新纳税人计税类别 --> 创建individual_tax_record
+创建individual_tax_record  -right-> 异步预警计算
+异步预警计算 --> [*]
+
+@enduml

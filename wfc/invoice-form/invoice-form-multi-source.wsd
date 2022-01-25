@@ -1,0 +1,38 @@
+@startuml
+hide empty description
+
+skinparam state {
+    BackgroundColor Ivory
+    BackgroundColor<<WEB>> HoneyDew
+    BackgroundColor<<TSP>> Azure
+    BackgroundColor<<OPENAPI>> Linen
+}
+
+state 来源 <<choice>>
+state 来源1 <<choice>>
+
+' TSP
+[*] --> 给定单条requestForm <<TSP>> : 来源为TSP
+给定单条requestForm --> 创建开票单
+创建开票单 --> 来源
+来源 --> [*] : 来源为TSP
+
+' WEB
+[*] --> 给定多条requestFormIds : 来源为WEB
+给定多条requestFormIds -right-> 数据合法性校验
+数据合法性校验 -right-> Preview
+Preview --> 来源1
+来源1 --> 合同有效性校验 <<WEB>> : 来源为 WEB
+合同有效性校验 -left-> 创建开票单
+来源  --> 记录操作日志 : 来源为WEB
+记录操作日志--> [*]
+
+' OPEN_API
+[*] --> 给定多条requestFormIds : 来源为OPEN_API
+来源1 --> 创建开票单 : 来源为OPEN_API
+来源  --> 记录操作日志 : 来源为OPEN_API
+
+
+
+
+@enduml
